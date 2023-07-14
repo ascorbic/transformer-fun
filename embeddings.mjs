@@ -26,15 +26,14 @@ export async function handler(event, context) {
     }
 
     console.time("embed");
-    const results = await Promise.all(
-      texts.map(async (text) => {
-        const { data } = await extractor(text, {
-          pooling: "mean",
-          normalize: true,
-        });
-        return data;
-      })
-    );
+    const results = [];
+    for (const text of texts) {
+      const { data } = await extractor(text, {
+        pooling: "mean",
+        normalize: true,
+      });
+      results.push(data);
+    }
     console.timeEnd("embed");
 
     return {

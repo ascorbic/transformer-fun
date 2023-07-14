@@ -1,7 +1,9 @@
-import { pipeline } from "@xenova/transformers";
 import os from "node:os";
+import { join } from "node:path";
+import { pipeline } from "@xenova/transformers";
 
 export async function handler(event, context) {
+  console.log("tmp", os.tmpdir());
   try {
     const { text } = event.queryStringParameters;
     if (!text) {
@@ -12,9 +14,9 @@ export async function handler(event, context) {
     }
     const extractor = await pipeline(
       "feature-extraction",
-      "multi-qa-MiniLM-L6-cos-v1",
+      "Xenova/multi-qa-MiniLM-L6-cos-v1",
       {
-        cache_dir: os.tmpdir(),
+        cache_dir: join(os.tmpdir(), "models"),
       }
     );
 

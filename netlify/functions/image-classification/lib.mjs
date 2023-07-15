@@ -3,12 +3,13 @@ import { join } from "node:path";
 import { pipeline } from "@xenova/transformers";
 
 const classifier = await pipeline(
-  "summarization",
-  "Xenova/distilbart-xsum-12-1",
+  "image-classification",
+  "Xenova/vit-base-patch16-224",
   {
     cache_dir: join(os.tmpdir(), "models"),
   }
 );
+
 export async function handler(event, context) {
   let text;
   try {
@@ -23,10 +24,17 @@ export async function handler(event, context) {
         body: "Please provide text to summarize",
       };
     }
-
+    if (!text.startsWith("https://")) {
+      return {
+        statusCode: 400,
+        body: "Please provide a valid URL",
+      };
+    }
+    const url = new URL(text);
+    console.log(url.toString());
     console.time("embed");
 
-    const data = await classifier(text);
+    const data = await classifier(url.toString(), { topk: 3 });
 
     console.timeEnd("embed");
 

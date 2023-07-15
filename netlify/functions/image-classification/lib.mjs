@@ -21,7 +21,7 @@ export async function handler(event, context) {
     if (!text?.length) {
       return {
         statusCode: 400,
-        body: "Please provide text to summarize",
+        body: "Please provide an image URL",
       };
     }
     if (!text.startsWith("https://")) {
@@ -32,11 +32,11 @@ export async function handler(event, context) {
     }
     const url = new URL(text);
     console.log(url.toString());
-    console.time("embed");
+    console.time("classify");
 
     const data = await classifier(url.toString(), { topk: 3 });
 
-    console.timeEnd("embed");
+    console.timeEnd("classify");
 
     return {
       statusCode: 200,

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Image Classification API Demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+      }
+      .label {
+        font-weight: bold;
+      }
+      .score {
+        color: #888;
+      }
+      #imagePreview {
+        width: 100%;
+        max-height: 200px;
+        object-fit: contain;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Image Classification API Demo</h1>
+      <input
+        id="imageUrl"
+        type="text"
+        placeholder="Enter image URL"
+        style="width: 100%; padding: 10px; margin-top: 20px"
+      />
+      <button id="classifyButton" style="margin-top: 20px; padding: 10px 20px">
+        Classify Image
+      </button>
+      <img id="imagePreview" src="" alt="Image preview" hidden />
+      <div id="result" class="result"></div>
+    </div>
+    <script>
+      document
+        .getElementById("classifyButton")
+        .addEventListener("click", async () => {
+          const imageUrl = document.getElementById("imageUrl").value;
+          document.getElementById("imagePreview").src = imageUrl;
+          document.getElementById("imagePreview").hidden = false;
+          const resultDiv = document.getElementById("result");
+          resultDiv.innerHTML = "Processing...";
+          try {
+            const response = await fetch(
+              "/.netlify/functions/image-classification",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "text/plain",
+                },
+                body: imageUrl,
+              }
+            );
+            if (!response.ok) throw new Error(await response.text());
+            const data = await response.json();
+            resultDiv.innerHTML = "";
+            data.forEach((item) => {
+              const div = document.createElement("div");
+              div.innerHTML = `<span class="label">${
+                item.label
+              }</span>: <span class="score">${item.score.toFixed(2)}</span>`;
+              resultDiv.appendChild(div);
+            });
+          } catch (error) {
+            resultDiv.innerHTML = "Error: " + error.message;
+          }
+        });
+    </script>
+  </body>
+</html>

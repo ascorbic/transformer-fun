@@ -1,7 +1,6 @@
 import os from "node:os";
 import { join } from "node:path";
 import { pipeline } from "@xenova/transformers";
-import "@xenova/transformers/dist/ort-wasm-simd.wasm";
 
 const classifier = await pipeline(
   "image-to-text",

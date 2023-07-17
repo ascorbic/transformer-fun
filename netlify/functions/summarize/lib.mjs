@@ -1,14 +1,18 @@
 import os from "node:os";
 import { join } from "node:path";
 import { pipeline } from "@xenova/transformers";
-
+console.time("model loaded");
 const classifier = await pipeline(
   "summarization",
-  "ahmedaeb/distilbart-cnn-6-6-optimised",
+  "Xenova/distilbart-cnn-6-6",
   {
     cache_dir: join(os.tmpdir(), "models"),
+    progress_callback: (progress) => {
+      console.log(progress);
+    },
   }
 );
+console.time("model loaded");
 export async function handler(event, context) {
   let text;
   try {
